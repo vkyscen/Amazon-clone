@@ -6,6 +6,7 @@ import Header from "./Common Components/Header";
 import Home from "./Pages/Home";
 import Checkout from "./Pages/Checkout";
 import Login from "./Pages/Login";
+import Payment from "./Pages/Payment";
 import { auth } from "./firebase";
 import { useStateValue } from "./StateProvider";
 
@@ -38,6 +39,12 @@ function App() {
           <Route path="/checkout">
             <Header />
             <Checkout />
+          </Route>
+
+          {/* Checkout/Payment Screen */}
+          <Route path="/payment">
+            <Header />
+            <Payment />
           </Route>
 
           {/* Home Screen */}
