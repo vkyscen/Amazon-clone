@@ -6,6 +6,7 @@ import { getTotalBasketPrice } from "../reducer";
 import { useStateValue } from "../StateProvider";
 import CheckoutProduct from "./Components/CheckoutProduct";
 import axios from "../axios";
+import { db } from "../firebase";
 import "./Payment.css";
 
 const Payment = () => {
@@ -36,23 +37,42 @@ const Payment = () => {
 
   console.log("THE SECRET IS >>>", clientSecret);
 
+console.log("ussssserr",user.uid);
   const handleSubmit = async (event) => {
+    // do all the fancy stripe stuff...
     event.preventDefault();
     setProcessing(true);
 
-    const payload = await stripe
-      .confirmCardPayment(clientSecret, {
+    const payload = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
-          card: elements.getElement(CardElement),
-        },
-      })
-      .then(({ paymentIntent }) => {
+            card: elements.getElement(CardElement)
+        }
+    }).then(({ paymentIntent }) => {
+        // paymentIntent = payment confirmation
+
+        db
+          .collection('users')
+          .doc(user?.uid)
+          .collection('orders')
+          .doc(paymentIntent.id)
+          .set({
+              basket: basket,
+              amount: paymentIntent.amount,
+              created: paymentIntent.created
+          })
+
         setSucceeded(true);
-        setError(null);
-        setProcessing(false);
-        history.replace("/orders");
-      });
-  };
+        setError(null)
+        setProcessing(false)
+
+        dispatch({
+            type: 'EMPTY_BASKET'
+        })
+
+        history.replace('/orders')
+    })
+
+}
 
   const handleChange = (event) => {
     setDisabled(event.empty);

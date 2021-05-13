@@ -7,6 +7,7 @@ import Home from "./Pages/Home";
 import Checkout from "./Pages/Checkout";
 import Login from "./Pages/Login";
 import Payment from "./Pages/Payment";
+import Orders from "./Pages/Orders";
 import { auth } from "./firebase";
 import { useStateValue } from "./StateProvider";
 import { loadStripe } from "@stripe/stripe-js";
@@ -19,7 +20,7 @@ function App() {
   const [{ user }, dispatch] = useStateValue();
   useEffect(() => {
     auth.onAuthStateChanged((authUser) => {
-      console.log("the user is ", authUser);
+      // console.log("the user is ", authUser);
       if (authUser) {
         dispatch({
           type: "SET_USER",
@@ -52,6 +53,11 @@ function App() {
             <Elements stripe={promise}>
               <Payment />
             </Elements>
+          </Route>
+
+          <Route path="/orders">
+            <Header />
+            <Orders />
           </Route>
 
           {/* Home Screen */}
