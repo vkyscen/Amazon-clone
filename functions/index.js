@@ -19,4 +19,20 @@ app.get("/", (req, res) => {
   res.send("Hello world");
 });
 
+app.post("/payments/create", async (req, res) => {
+  const total = req.query.total;
+  console.log("payment received of ", total);
+
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: total,
+    currency: "inr",
+  });
+  //201 is used when everything is ok but u created something
+  res.status(201).send({
+    clientSecret: paymentIntent.client_secret,
+  });
+});
 exports.api = functions.https.onRequest(app);
+
+//local api
+//http://localhost:5001/clone-42a44/us-central1/api
