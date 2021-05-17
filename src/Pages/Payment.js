@@ -1,5 +1,5 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import CurrencyFormat from "react-currency-format";
 import { Link, useHistory } from "react-router-dom";
 import { getTotalBasketPrice } from "../reducer";
@@ -7,6 +7,8 @@ import { useStateValue } from "../StateProvider";
 import CheckoutProduct from "./Components/CheckoutProduct";
 import axios from "../axios";
 import { db } from "../firebase";
+import FlipMove from "react-flip-move";
+
 import "./Payment.css";
 
 const Payment = () => {
@@ -20,6 +22,18 @@ const Payment = () => {
   const [error, setError] = useState(null);
   const [disabled, setDisabled] = useState(true);
   const [clientSecret, setClientSecret] = useState(true);
+
+  const FunctionalCheckoutProduct = forwardRef((props, ref) => (
+    <div ref={ref}>
+      <CheckoutProduct
+        id={props.id}
+        title={props.title}
+        image={props.image}
+        rating={props.rating}
+        price={props.price}
+      />
+    </div>
+  ));
 
   useEffect(() => {
     // generate the special stripe secret which allows us to charge a customer
@@ -37,42 +51,42 @@ const Payment = () => {
 
   console.log("THE SECRET IS >>>", clientSecret);
 
-console.log("ussssserr",user.uid);
+  console.log("ussssserr", user.uid);
   const handleSubmit = async (event) => {
     // do all the fancy stripe stuff...
     event.preventDefault();
     setProcessing(true);
 
-    const payload = await stripe.confirmCardPayment(clientSecret, {
+    const payload = await stripe
+      .confirmCardPayment(clientSecret, {
         payment_method: {
-            card: elements.getElement(CardElement)
-        }
-    }).then(({ paymentIntent }) => {
+          card: elements.getElement(CardElement),
+        },
+      })
+      .then(({ paymentIntent }) => {
         // paymentIntent = payment confirmation
 
-        db
-          .collection('users')
+        db.collection("users")
           .doc(user?.uid)
-          .collection('orders')
+          .collection("orders")
           .doc(paymentIntent.id)
           .set({
-              basket: basket,
-              amount: paymentIntent.amount,
-              created: paymentIntent.created
-          })
+            basket: basket,
+            amount: paymentIntent.amount,
+            created: paymentIntent.created,
+          });
 
         setSucceeded(true);
-        setError(null)
-        setProcessing(false)
+        setError(null);
+        setProcessing(false);
 
         dispatch({
-            type: 'EMPTY_BASKET'
-        })
+          type: "EMPTY_BASKET",
+        });
 
-        history.replace('/orders')
-    })
-
-}
+        history.replace("/orders");
+      });
+  };
 
   const handleChange = (event) => {
     setDisabled(event.empty);
@@ -102,16 +116,18 @@ console.log("ussssserr",user.uid);
             <h3>Review Items and delivery</h3>
           </div>
           <div className="payment-items">
-            {basket.map((item) => (
-              <CheckoutProduct
-                key={item.id}
-                id={item.id}
-                title={item.title}
-                image={item.image}
-                rating={item.rating}
-                price={item.price}
-              />
-            ))}
+            <FlipMove>
+              {basket.map((item) => (
+                <FunctionalCheckoutProduct
+                  // key={item.id}
+                  id={item.id}
+                  title={item.title}
+                  image={item.image}
+                  rating={item.rating}
+                  price={item.price}
+                />
+              ))}
+            </FlipMove>
           </div>
         </div>
 

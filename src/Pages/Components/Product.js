@@ -12,6 +12,7 @@ const Product = ({ id, title, image, price, rating }) => {
   };
   return (
     <div className="product">
+      {/* <div className="product-sub"> */}
       <div className="product-info">
         <p>{title}</p>
         <p className="product-price">
@@ -29,6 +30,7 @@ const Product = ({ id, title, image, price, rating }) => {
       <img src={image} alt="" />
 
       <button onClick={addToBasket}>Add to Basket</button>
+      {/* </div> */}
     </div>
   );
 };

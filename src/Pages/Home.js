@@ -1,16 +1,49 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./Home.css";
 import Product from "./Components/Product";
 
+const images = [
+  "https://images-eu.ssl-images-amazon.com/images/G/02/digital/video/merch2016/Hero/Covid19/Generic/GWBleedingHero_ENG_COVIDUPDATE__XSite_1500x600_PV_en-GB._CB428684220_.jpg",
+  "https://images-eu.ssl-images-amazon.com/images/G/31/img17/Home/LA/Diwali2019/Rishab/Auto_Biss/BISS_GW_Hero/Feb_21/PC_Hero_1500x600-._CB658822030_.jpg",
+  "https://images-eu.ssl-images-amazon.com/images/G/31/Gateway/Zeitgeist/Mar20/Covid19/2021/IN_GWD_Covid19_CustomerMsg_MH_ENG_1x_v1._CB669806110_.jpg",
+  "https://images-eu.ssl-images-amazon.com/images/G/31/AmazonVideo/2021/X-site/SingleTitle/WW84/Launch/1500x600_Hero-Tall_JPN._CB669639160_.jpg",
+];
+const delay = 2500;
 const Home = () => {
+  const [index, setIndex] = useState(0);
+  const timeoutRef = useRef(null);
+
+  function resetTimeout() {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  }
+
+  React.useEffect(() => {
+    resetTimeout();
+    timeoutRef.current = setTimeout(
+      () =>
+        setIndex((prevIndex) =>
+          prevIndex === images.length - 1 ? 0 : prevIndex + 1
+        ),
+      delay
+    );
+
+    return () => {
+      resetTimeout();
+    };
+  }, [index]);
   return (
     <div className="home">
       <div className="home-container">
-        <img
-          className="home-image"
-          src="https://images-eu.ssl-images-amazon.com/images/G/02/digital/video/merch2016/Hero/Covid19/Generic/GWBleedingHero_ENG_COVIDUPDATE__XSite_1500x600_PV_en-GB._CB428684220_.jpg"
-          alt=""
-        />
+        <div
+          className="home-slideshowSlider"
+          style={{ transform: `translate3d(${-index * 100}%, 0, 0)` }}
+        >
+          {images.map((item, i) => (
+            <img className="home-image" src={item} alt="" key={i} />
+          ))}
+        </div>
 
         <div className="home-row">
           <Product

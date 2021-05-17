@@ -2,6 +2,11 @@
     display: flex;
     margin : 20px 0;
     padding: 20px;
+    border-radius: 5px;
+    box-shadow: 8px 14px 38px rgba(39,44,49,.06), 1px 3px 8px rgba(39,44,49,.03);
+    overflow: hidden; 
+    background: white;
+    transition: all .5s ease; 
 }
 
 .checkoutProduct-image{
@@ -23,8 +28,11 @@
     margin-top: 10px;
     border-color: #a88743 #9c7e31 #846a29;
     color: #111;
+    border-radius: 3px;
+    /* padding: 5px; */
 }
 .checkoutProduct-rating{
     display: flex;
     margin: 10px 0;
+    background-color: transparent;
 }

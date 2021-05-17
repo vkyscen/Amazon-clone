@@ -1,10 +1,24 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import { useStateValue } from "../StateProvider";
 import "./Checkout.css";
 import CheckoutProduct from "./Components/CheckoutProduct";
 import Subtotal from "./Components/Subtotal";
+import FlipMove from "react-flip-move";
+
 const Checkout = () => {
   const [{ basket, user }, dispatch] = useStateValue();
+  //for animations
+  const FunctionalCheckoutProduct = forwardRef((props, ref) => (
+    <div ref={ref}>
+      <CheckoutProduct
+        id={props.id}
+        title={props.title}
+        image={props.image}
+        rating={props.rating}
+        price={props.price}
+      />
+    </div>
+  ));
   return (
     <div className="checkout">
       <div className="checkout-left">
@@ -17,16 +31,12 @@ const Checkout = () => {
           <h3>Hello,{user?.email}</h3>
           <h2 className="checkout-title">Your Shopping Basket</h2>
           {/* checkout product */}
-          {basket.map((item) => (
-            <CheckoutProduct
-              key={item.id}
-              id={item.id}
-              title={item.title}
-              image={item.image}
-              rating={item.rating}
-              price={item.price}
-            />
-          ))}
+
+          <FlipMove>
+            {basket.map((item) => (
+              <FunctionalCheckoutProduct {...item} />
+            ))}
+          </FlipMove>
         </div>
       </div>
 
